@@ -1,8 +1,8 @@
-import React, {useState, useCallback} from 'react'
-import {Link} from 'react-router-dom';
+import React, {useState, useCallback, useEffect} from 'react'
+import {Link, useNavigate} from 'react-router-dom';
 import axios from 'axios';
 
-import {API_URL} from '../../config';
+import {API_URL, JWT_KEY} from '../../config';
 import Title from '../Title';
 import {SigninMainWrapper, SignupDivWrapper, FormDivWrapper, ErrorDivWrapper} from './styles';
 
@@ -12,6 +12,7 @@ function Signin() {
   const [password, setPassword] = useState('');
   const [passwordError, setPasswordError] = useState(false);
   const [isValid, setIsValid] = useState(false);
+  const navigator = useNavigate();
 
   const onChangeEmail = useCallback((event) => {
     setEmail(event.target.value);
@@ -57,17 +58,35 @@ function Signin() {
     const data = {email, password};
     try {
       const result = await axios.post(API_URL + '/auth/signin', data);
-      //TODO: 결과값 받아오면 로컬스토리지에 jwt 토큰값 추가하는 로직 작성하기
-      
+
+      if (result.data?.access_token) { // 받아온 결과값에 access_token 값이 존재하는 경우
+        localStorage.clear();
+        localStorage.setItem(JWT_KEY, result.data.access_token);
+        alert('환영합니다!');
+        navigator('/todo');
+      } else { // 없는 경우 에러 발생
+        throw new Error('예기치 못한 오류가 발생했습니다. 관리자에게 문의하세요');
+      }
     } catch (error) {
-      if (error?.response.status === 401) { // Unauthorized 오류
-        alert('이메일 혹은 비밀번호가 일치하지 않습니다.');
+      if ([401, 404].includes(error?.response.status)) { // Unauthorized 오류
+        alert(error.response.data.message);
       } else {
         alert('오류가 발생했습니다. 관리자에게 문의하세요.');
       }
     }
 
   }, [email, password]);
+
+  useEffect(() => { // 로그인한 경우 접근 불가 처리
+    if (localStorage.getItem(JWT_KEY)) { 
+      alert('잘못된 접근입니다.');
+      navigator('/todo'); //todo 로 redirect
+    }
+  }, [navigator]);
+
+  if (localStorage.getItem(JWT_KEY)) { // 로그인한 경우 화면을 그리지 않도록 처리
+    return;
+  }
 
   return (
     <>
@@ -76,7 +95,8 @@ function Signin() {
         <form action="" method="post">
           <FormDivWrapper>
             <input 
-              data-testid="email-input" 
+              data-testid="email-input"
+              placeholder='이메일'
               type='text' 
               value={email} 
               onChange={onChangeEmail}
@@ -84,6 +104,7 @@ function Signin() {
             {emailError && <ErrorDivWrapper>올바르지 않은 이메일 형식입니다.</ErrorDivWrapper>}
             <input 
               data-testid="password-input" 
+              placeholder='비밀번호'
               type='password' 
               value={password} 
               onChange={onChangePassword}
