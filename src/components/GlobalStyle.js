@@ -23,6 +23,8 @@ export const GlobalStyle = createGlobalStyle`
     --color-white:          #ffffff;
     --color-gray:           #757575;
     --color-gray-light:     #dddddd;
+    --color-red:            #FF0000;
+    --color-blue:           #0000FF;
 
     /* font size */
     --font-size-xs:   6px;
@@ -39,9 +41,10 @@ export const GlobalStyle = createGlobalStyle`
     --padding-size-m: 16px;
     --padding-size-l: 40px;
 
-    /* width size */
+    /* width & height size */
     --width-size-30: 30px;
     --width-size-100: 100px;
+    --default-main-height: 70vh;
   }
 
   a {
@@ -62,6 +65,6 @@ export const GlobalStyle = createGlobalStyle`
 `;
 
 export const RoutesWrapper = styled.div`
-  min-height: 84vh;
+  min-height: 75vh;
   padding: var(--padding-size-m);
 `;
