@@ -1,8 +1,10 @@
 import React, {useState, useCallback, useEffect, useContext} from 'react';
 import {useNavigate} from 'react-router-dom';
+import { signupUser } from '../../actions/userAction';
 
 import { api } from '../../api';
 import { LoginContext } from '../../context';
+import { UserContext } from '../../reducers/userReducer';
 import Title from '../Title';
 import {SignupMainWrapper, FormDivWrapper, ErrorDivWrapper} from './styles';
 
@@ -13,7 +15,7 @@ function Signup() {
   const [passwordError, setPasswordError] = useState(false);
   const [isValid, setIsValid] = useState(false);
   const navigator = useNavigate();
-  const {isLogin} = useContext(LoginContext);
+  const [userState, dispatch] = useContext(UserContext);
 
   const onChangeEmail = useCallback((event) => {
     setEmail(event.target.value);
@@ -58,28 +60,22 @@ function Signup() {
 
     const data = {email, password};
     try {
-      await api.signup(data);
-      alert('회원가입에 성공했습니다.');
+      await signupUser(dispatch, data);
       navigator('/signin');
     } catch (error) {
-      if (error?.response.status === 400) { // Bad Request 오류 - 이메일 중복
-        alert(error.response.data.message);
-      } else {
-        alert('오류가 발생했습니다. 관리자에게 문의하세요.');
-      }
+      
     }
-  }, [email, password, navigator]);
+  }, [email, password, dispatch, navigator]);
 
   useEffect(() => { // 로그인한 경우 접근 불가 처리
-    if (isLogin) { 
+    if (userState.isLogin) { 
       alert('잘못된 접근입니다.');
       navigator('/todo'); //todo 로 redirect
-      return; // 화면을 그리지 않기 위한 수단
     }
-  }, [navigator, isLogin]);
+  }, [navigator, userState]);
 
-  if (isLogin) { // 로그인한 경우 화면을 그리지 않도록 처리
-    return;
+  if (userState.isLogin) { // 로그인한 경우 화면을 그리지 않도록 처리
+    return null;
   }
 
   return (
@@ -104,7 +100,10 @@ function Signup() {
               onChange={onChangePassword}
               />
             {passwordError && <ErrorDivWrapper>비밀번호는 8자 이상입니다.</ErrorDivWrapper>}
-            <button data-testid="signup-button" onClick={onSubmitSignup} disabled={!isValid}>로그인</button>
+            <button data-testid="signup-button" onClick={onSubmitSignup} disabled={!isValid}>회원가입</button>
+            {userState.signupError 
+              && <ErrorDivWrapper>{userState.signupError.response.data.message}</ErrorDivWrapper> 
+            }
           </FormDivWrapper>
         </form>
       </SignupMainWrapper>

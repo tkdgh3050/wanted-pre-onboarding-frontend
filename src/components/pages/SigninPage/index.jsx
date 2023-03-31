@@ -1,11 +1,10 @@
 import React, {useState, useCallback, useEffect, useContext} from 'react'
 import {Link, useNavigate} from 'react-router-dom';
 
-import {JWT_KEY} from '../../config';
-import { api } from '../../api';
 import Title from '../Title';
 import {SigninMainWrapper, SignupDivWrapper, FormDivWrapper, ErrorDivWrapper} from './styles';
-import { LoginContext } from '../../context';
+import { UserContext } from '../../reducers/userReducer';
+import { signinUser } from '../../actions/userAction';
 
 function Signin() {
   const [email, setEmail] = useState('');
@@ -14,7 +13,7 @@ function Signin() {
   const [passwordError, setPasswordError] = useState(false);
   const [isValid, setIsValid] = useState(false);
   const navigator = useNavigate();
-  const {isLogin, setIsLogin} = useContext(LoginContext);
+  const [userState, dispatch] = useContext(UserContext);
 
   const onChangeEmail = useCallback((event) => {
     setEmail(event.target.value);
@@ -59,35 +58,22 @@ function Signin() {
 
     const data = {email, password};
     try {
-      const result = await api.signin(data);
-
-      if (result.data?.access_token) { // 받아온 결과값에 access_token 값이 존재하는 경우
-        localStorage.clear();
-        localStorage.setItem(JWT_KEY, result.data.access_token);
-        setIsLogin(true);
-        alert('환영합니다!');
-        navigator('/todo');
-      } else { // 없는 경우 에러 발생
-        throw new Error('예기치 못한 오류가 발생했습니다. 관리자에게 문의하세요');
-      }
+      await signinUser(dispatch, data);
+      navigator('/todo');
     } catch (error) {
-      if ([401, 404].includes(error?.response.status)) { // Unauthorized 오류
-        alert(error.response.data.message);
-      } else {
-        alert('오류가 발생했습니다. 관리자에게 문의하세요.');
-      }
+      
     }
-  }, [email, password, setIsLogin, navigator]);
+  }, [email, password, dispatch, navigator]);
 
   useEffect(() => { // 로그인한 경우 접근 불가 처리
-    if (isLogin) { 
+    if (userState.isLogin) { 
       alert('잘못된 접근입니다.');
       navigator('/todo'); //todo 로 redirect
     }
-  }, [navigator, isLogin]);
+  }, [navigator, userState]);
 
-  if (isLogin) { // 로그인한 경우 화면을 그리지 않도록 처리
-    return;
+  if (userState.isLogin) { // 로그인한 경우 화면을 그리지 않도록 처리
+    return null;
   }
 
   return (
