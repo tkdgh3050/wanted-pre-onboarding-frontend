@@ -1,8 +1,8 @@
-import React, {useState, useCallback, useEffect} from 'react';
-import axios from 'axios';
+import React, {useState, useCallback, useEffect, useContext} from 'react';
 import {useNavigate} from 'react-router-dom';
 
-import {API_URL, JWT_KEY} from '../../config';
+import { api } from '../../api';
+import { LoginContext } from '../../context';
 import Title from '../Title';
 import {SignupMainWrapper, FormDivWrapper, ErrorDivWrapper} from './styles';
 
@@ -13,6 +13,7 @@ function Signup() {
   const [passwordError, setPasswordError] = useState(false);
   const [isValid, setIsValid] = useState(false);
   const navigator = useNavigate();
+  const {isLogin} = useContext(LoginContext);
 
   const onChangeEmail = useCallback((event) => {
     setEmail(event.target.value);
@@ -57,7 +58,7 @@ function Signup() {
 
     const data = {email, password};
     try {
-      await axios.post(API_URL + '/auth/signup', data);
+      await api.signup(data);
       alert('회원가입에 성공했습니다.');
       navigator('/signin');
     } catch (error) {
@@ -70,14 +71,14 @@ function Signup() {
   }, [email, password, navigator]);
 
   useEffect(() => { // 로그인한 경우 접근 불가 처리
-    if (localStorage.getItem(JWT_KEY)) { 
+    if (isLogin) { 
       alert('잘못된 접근입니다.');
       navigator('/todo'); //todo 로 redirect
       return; // 화면을 그리지 않기 위한 수단
     }
-  }, [navigator]);
-  
-  if (localStorage.getItem(JWT_KEY)) { // 로그인한 경우 화면을 그리지 않도록 처리
+  }, [navigator, isLogin]);
+
+  if (isLogin) { // 로그인한 경우 화면을 그리지 않도록 처리
     return;
   }
 
