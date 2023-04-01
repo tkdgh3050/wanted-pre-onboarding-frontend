@@ -9,6 +9,7 @@ import Landing from './pages/LandingPage';
 import Signup from './pages/SignupPage';
 import Signin from './pages/SigninPage';
 import Todo from './pages/TodoPage';
+import { TodoContext, todoInitialState, todoReducer } from './reducers/todoReducer';
 
 function App() {
   return (
@@ -16,16 +17,18 @@ function App() {
       <GlobalStyle />
       <BrowserRouter>
         <UserContext.Provider value={useReducer(userReducer, userInitialState)}>
-          <Header />
-          <RoutesWrapper>
-            <Routes>
-              <Route path="/" element={<Landing />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/signin" element={<Signin />} />
-              <Route path="/todo" element={<Todo />} />
-            </Routes>
-          </RoutesWrapper>
-          <Footer />
+          <TodoContext.Provider value={useReducer(todoReducer, todoInitialState)}>
+            <Header />
+            <RoutesWrapper>
+              <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/signin" element={<Signin />} />
+                <Route path="/todo" element={<Todo />} />
+              </Routes>
+            </RoutesWrapper>
+            <Footer />
+          </TodoContext.Provider>
         </UserContext.Provider>
       </BrowserRouter>
     </>
