@@ -2,8 +2,6 @@ import React, {useState, useCallback, useEffect, useContext} from 'react';
 import {useNavigate} from 'react-router-dom';
 import { signupUser } from '../../actions/userAction';
 
-import { api } from '../../api';
-import { LoginContext } from '../../context';
 import { UserContext } from '../../reducers/userReducer';
 import Title from '../Title';
 import {SignupMainWrapper, FormDivWrapper, ErrorDivWrapper} from './styles';

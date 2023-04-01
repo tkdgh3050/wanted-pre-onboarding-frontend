@@ -30,6 +30,7 @@ export async function signinUser(dispatch, data) {
   }
 }
 
+// 회원가입 진행
 export async function signupUser(dispatch, data) {
   dispatch({ type: SIGNUP_ACTION_LOADING });
   try {
