@@ -5,6 +5,7 @@ export const SIGNIN_ACTION_ERROR = 'signin_error';
 export const SIGNUP_ACTION_LOADING = 'signup_loading';
 export const SIGNUP_ACTION_DONE = 'signup_done';
 export const SIGNUP_ACTION_ERROR = 'signup_error';
+export const LOGOUT_ACTION = 'logout';
 
 // todoAction types
 export const LOAD_TODO_ACTION_LOADING = 'load_todo_loading';

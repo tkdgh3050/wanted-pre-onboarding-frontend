@@ -3,6 +3,7 @@ import { JWT_KEY } from '../config';
 import {
   SIGNIN_ACTION_DONE, SIGNIN_ACTION_ERROR, SIGNIN_ACTION_LOADING,
   SIGNUP_ACTION_DONE, SIGNUP_ACTION_ERROR, SIGNUP_ACTION_LOADING,
+  LOGOUT_ACTION,
 } from '../actions/types';
 
 export const UserContext = createContext();
@@ -62,6 +63,14 @@ export const userReducer = (state, action) => {
         ...state,
         signupLoading: false,
         signupError: action.error,
+      }
+    }
+    case LOGOUT_ACTION: {
+      console.log('here');
+      localStorage.clear();
+      return {
+        ...state,
+        isLogin: false,
       }
     }
     default:
