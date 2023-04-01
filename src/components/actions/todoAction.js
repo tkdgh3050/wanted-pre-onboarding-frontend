@@ -9,9 +9,9 @@ import {
 
 // todo 불러오는 action
 export async function loadTodos(dispatch) {
-  const accessToken = localStorage.getItem(JWT_KEY); //header 에 인증정보 넣기 위함
-  dispatch({ type: LOAD_TODO_ACTION_LOADING });
   try {
+    const accessToken = localStorage.getItem(JWT_KEY); //header 에 인증정보 넣기 위함
+    dispatch({ type: LOAD_TODO_ACTION_LOADING });
     const result = await api.getTodos(accessToken);
     dispatch({ type: LOAD_TODO_ACTION_DONE, data: result.data });
   } catch (error) {
@@ -27,9 +27,9 @@ export async function loadTodos(dispatch) {
 
 // todo 추가하는 action
 export async function addTodo(dispatch, data) {
-  const accessToken = localStorage.getItem(JWT_KEY); //header 에 인증정보 넣기 위함
-  dispatch({ type: ADD_TODO_ACTION_LOADING });
   try {
+    const accessToken = localStorage.getItem(JWT_KEY); //header 에 인증정보 넣기 위함
+    dispatch({ type: ADD_TODO_ACTION_LOADING });
     const result = await api.createTodo(data, accessToken);
 
     if (result.data) { // 받아온 결과값에 access_token 값이 존재하는 경우
@@ -39,7 +39,7 @@ export async function addTodo(dispatch, data) {
     }
   } catch (error) {
     dispatch({ type: ADD_TODO_ACTION_ERROR, error });
-    if ([401, 404].includes(error?.response.status)) { // Unauthorized 오류
+    if ([401, 404].includes(error.response?.status)) { // Unauthorized 오류
       alert(error.response.data.message);
     } else {
       alert('오류가 발생했습니다. 관리자에게 문의하세요.');
@@ -50,9 +50,9 @@ export async function addTodo(dispatch, data) {
 
 // todo 수정하는 action
 export async function updateTodo(dispatch, id, data) {
-  const accessToken = localStorage.getItem(JWT_KEY); //header 에 인증정보 넣기 위함
-  dispatch({ type: UPDATE_TODO_ACTION_LOADING });
   try {
+    const accessToken = localStorage.getItem(JWT_KEY); //header 에 인증정보 넣기 위함
+    dispatch({ type: UPDATE_TODO_ACTION_LOADING });
     const result = await api.updateTodo(id, data, accessToken);
 
     if (result.data) { // 받아온 결과값에 access_token 값이 존재하는 경우
@@ -73,9 +73,9 @@ export async function updateTodo(dispatch, id, data) {
 
 // todo 제거하는 action
 export async function removeTodo(dispatch, id) {
-  const accessToken = localStorage.getItem(JWT_KEY); //header 에 인증정보 넣기 위함
-  dispatch({ type: REMOVE_TODO_ACTION_LOADING });
   try {
+    const accessToken = localStorage.getItem(JWT_KEY); //header 에 인증정보 넣기 위함
+    dispatch({ type: REMOVE_TODO_ACTION_LOADING });
     await api.deleteTodo(id, accessToken);
     dispatch({ type: REMOVE_TODO_ACTION_DONE, data: id });
   } catch (error) {

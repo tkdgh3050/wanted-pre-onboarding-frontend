@@ -1,13 +1,18 @@
 import React, {useState, useCallback, useRef, useContext} from 'react';
-import { addTodo } from '../../../actions/todoAction';
-import { TodoContext } from '../../../reducers/todoReducer';
+import {useNavigate} from 'react-router-dom';
 
+import { addTodo } from '../../../actions/todoAction';
+import { LOGOUT_ACTION } from '../../../actions/types';
+import { TodoContext } from '../../../reducers/todoReducer';
+import { UserContext } from '../../../reducers/userReducer';
 import { TodoFromSectionWrapper } from './styles';
 
 function TodoForm() { 
   const [todoInput, setTodoInput] = useState('');
   const todoInputRef = useRef(null);
   const [ , dispatch] = useContext(TodoContext);
+  const [ , userDispatch] = useContext(UserContext);
+  const navigator = useNavigate();
 
   const onChangeTodoInput = useCallback((event) => { // 새로운 todo 입력하는 부분
     setTodoInput(event.target.value);
@@ -26,9 +31,12 @@ function TodoForm() {
       await addTodo(dispatch, data);
       setTodoInput(''); // 추가하면 todo 입력부분 비워주기
     } catch (error) {
-      
+      if ([401, 404].includes(error?.response.status)) { // Unauthorized 오류인 경우 로그아웃 시킨 뒤 로그인 화면으로 이동
+        userDispatch({type: LOGOUT_ACTION});
+        navigator('/signin');
+      }
     }
-  },[todoInput, todoInputRef, dispatch]);
+  },[todoInput, todoInputRef, dispatch, userDispatch, navigator]);
 
   return (
     <TodoFromSectionWrapper>

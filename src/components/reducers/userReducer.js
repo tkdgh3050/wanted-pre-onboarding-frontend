@@ -66,7 +66,6 @@ export const userReducer = (state, action) => {
       }
     }
     case LOGOUT_ACTION: {
-      console.log('here');
       localStorage.clear();
       return {
         ...state,
