@@ -3,6 +3,7 @@ import styled from 'styled-components';
 export const TodoListSectionWrapper = styled.section`
   width: 75vw;
   min-height: 60vh;
+  max-width: 1000px;
   margin-top: var(--padding-size-m);
   padding: var(--padding-size-s);
   border: 1px solid black;
