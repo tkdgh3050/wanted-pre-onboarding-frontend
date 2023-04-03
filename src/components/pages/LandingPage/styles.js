@@ -4,9 +4,11 @@ export const MainWrapper = styled.main`
   display: flex;
   align-items: center;
   min-height: var(--default-main-height);
+  justify-content: center;
   & img {
-    width: 40vw;
+    width: 35vw;
     height: fit-content;
+    max-width: 500px;
   }
   @media screen and (max-width: 768px) {
     flex-direction: column;
@@ -19,9 +21,8 @@ export const MainWrapper = styled.main`
 `;
 
 export const IntroSectionWrapper = styled.section`
-  width: 60vw;
-  font-size: 3vw;
-  
+  font-size: min(40px,3vw);
+  max-width: 600px;
   & h2 {
     margin-top: 0px;
   }
